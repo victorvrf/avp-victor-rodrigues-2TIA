@@ -1,2 +1,12 @@
-/node_modules
+# Dependências
+node_modules/
+
+# Arquivos de ambiente
 .env
+
+# Logs
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

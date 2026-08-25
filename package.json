@@ -1,21 +1,22 @@
 {
-  "name": "primeiros-passos-node",
+  "name": "gerenciamento-equipamentos-seguranca",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "API REST para cadastro e gerenciamento de equipamentos de segurança (AV1 - Desenvolvimento de Websites).",
+  "main": "src/app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js"
   },
-  "keywords": [],
+  "keywords": [
+    "api",
+    "rest",
+    "express",
+    "seguranca",
+    "equipamentos"
+  ],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
-    "express": "^5.2.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.14"
+    "express": "^4.21.2"
   }
 }
