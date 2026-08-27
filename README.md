@@ -2,16 +2,32 @@
 
 API REST desenvolvida em **Node.js + Express** para cadastrar e gerenciar equipamentos de segurança.
 
-> Trabalho AV1 da disciplina **Desenvolvimento de Websites**.
+> Trabalho **AV2** da disciplina **Desenvolvimento de Websites** — evolução direta do projeto da **AV1**.
 > Os dados são armazenados **temporariamente em memória** (somente enquanto o servidor está ativo).
 
 ---
 
-## Tecnologias utilizadas
+## O que a AV2 adicionou (além do CRUD da AV1)
 
-- [Node.js](https://nodejs.org/)
-- [Express](https://expressjs.com/)
-- JavaScript (sem TypeScript, sem banco de dados)
+- Cadastro de usuários com **senha criptografada** (`bcrypt`)
+- **Login** com geração de **token JWT** (crachá digital)
+- **Middleware** que protege as rotas de equipamentos (exige token)
+- **Upload de imagens** (`Multer`) com validação de tipo e tamanho
+- **Swagger** (documentação interativa em `/api-docs`)
+- CRUD da **AV1** mantido e agora **protegido por autenticação**
+
+---
+
+## Tecnologias instaladas
+
+| Tecnologia | Versão | Função |
+|------------|--------|--------|
+| Express | ^4.21.2 | Servidor HTTP e rotas |
+| bcrypt | ^6.0.0 | Criptografar a senha dos usuários |
+| jsonwebtoken | ^9.0.3 | Gerar e validar o token JWT |
+| multer | ^2.2.0 | Upload de arquivos (imagens) |
+| swagger-ui-express | ^5.0.1 | Interface web do Swagger |
+| swagger-jsdoc | ^6.3.0 | Montar a especificação OpenAPI |
 
 ---
 
@@ -20,25 +36,26 @@ API REST desenvolvida em **Node.js + Express** para cadastrar e gerenciar equipa
 ```
 projeto/
 ├── src/
-│   └── app.js          # Arquivo principal com o servidor e as rotas
-├── package.json        # Configurações e dependências do projeto
-├── .gitignore          # Arquivos ignorados pelo Git
-└── README.md           # Este arquivo de instruções
+│   ├── app.js                  # Servidor e todas as rotas
+│   ├── middlewares/
+│   │   └── auth.js             # Middleware de autenticação (token)
+│   ├── docs/
+│   │   └── swagger.js          # Configuração do Swagger (OpenAPI)
+│   └── uploads/                # Pasta onde as imagens são salvas
+├── package.json
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## Como executar o projeto
+## Como instalar e executar
 
 ### 1. Instalar as dependências
-
-Abra o terminal na pasta do projeto e execute:
 
 ```bash
 npm install
 ```
-
-> Isso instalará o Express e as demais dependências listadas no `package.json`.
 
 ### 2. Iniciar o servidor
 
@@ -46,169 +63,171 @@ npm install
 npm start
 ```
 
-O servidor ficará disponível em: `http://localhost:3000`
+Para desenvolvimento com reinício automático:
 
-> Para desenvolvimento, com reinício automático ao alterar o código, use `npm run dev`.
+```bash
+npm run dev
+```
 
-### 3. Comando para encerrar o servidor
+O servidor fica disponível em: `http://localhost:3000`
 
-No terminal, pressione `Ctrl + C`.
+### 3. Acessar o Swagger
+
+Abra no navegador: **http://localhost:3000/api-docs**
 
 ---
 
-## Endpoints da API
+## Rotas da AV1 (CRUD de equipamentos)
 
-Abaixo estão todas as rotas da API para testar no **Insomnia** (ou Postman).
+> **Atenção:** agora essas rotas exigem um token válido (evolução da AV2).
 
-> Como a lista é mantida em memória, ao reiniciar o servidor os dados cadastrados são apagados.
+| Método | Rota                    | Descrição                              |
+|--------|-------------------------|----------------------------------------|
+| POST   | `/equipamentos`          | Cadastra um novo equipamento           |
+| GET    | `/equipamentos`          | Lista todos os equipamentos            |
+| GET    | `/equipamentos/:id`      | Busca um equipamento pelo ID           |
+| PUT    | `/equipamentos/:id`      | Edita um equipamento existente         |
+| DELETE | `/equipamentos/:id`      | Exclui um equipamento pelo ID          |
 
-### 1. Cadastrar um equipamento — `POST /equipamentos`
+---
 
-Cria um novo equipamento. O `id` é gerado automaticamente.
+## Rotas novas da AV2
 
-**URL:** `http://localhost:3000/equipamentos`
-**Método:** `POST`
+| Método | Rota         | Descrição                            | Exige token? |
+|--------|--------------|--------------------------------------|--------------|
+| POST   | `/usuarios`  | Cadastra usuário (senha criptografada) | Não        |
+| GET    | `/usuarios`  | Lista usuários (sem expor senha)      | Sim          |
+| POST   | `/login`     | Faz login e retorna o token JWT       | Não          |
+| POST   | `/upload`    | Envia uma imagem (até 5 MB)           | Sim          |
+| GET    | `/api-docs`  | Documentação interativa (Swagger)     | Não          |
+
+---
+
+## Como cadastrar um usuário
+
+**`POST /usuarios`** — não precisa de token.
+
+**URL:** `http://localhost:3000/usuarios`
 **Body (JSON):**
-
 ```json
 {
-  "nome": "Câmera IP",
-  "categoria": "Monitoramento",
-  "fabricante": "Intelbras",
-  "quantidade": 10,
-  "status": "disponível"
+  "nome": "Carlos Silva",
+  "email": "carlos@email.com",
+  "senha": "123456"
 }
 ```
 
-**Respostas esperadas:**
-- `201 Created` — retorna o equipamento criado (com `id`).
-- `400 Bad Request` — se faltar `nome`, `categoria`, `fabricante` ou `quantidade`.
-
-> O campo `status` é opcional. Se não for enviado, assume o valor `"disponível"`.
-
----
-
-### 2. Listar todos os equipamentos — `GET /equipamentos`
-
-Retorna a lista completa dos equipamentos cadastrados.
-
-**URL:** `http://localhost:3000/equipamentos`
-**Método:** `GET`
-
-**Resposta esperada:**
-
+**Resposta (201):**
 ```json
-[
-  {
-    "id": 1,
-    "nome": "Câmera IP",
-    "categoria": "Monitoramento",
-    "fabricante": "Intelbras",
-    "quantidade": 10,
-    "status": "disponível"
-  }
-]
+{
+  "id": 1,
+  "nome": "Carlos Silva",
+  "email": "carlos@email.com"
+}
 ```
 
-> Se não houver equipamentos, retorna uma lista vazia `[]`.
-
+> A senha **não** aparece na resposta. Ela é guardada já criptografada com `bcrypt`.
 ---
 
-### 3. Buscar um equipamento pelo ID — `GET /equipamentos/:id`
+## Como fazer login e obter o token
 
-Busca um equipamento específico.
+**`POST /login`**
 
-**URL:** `http://localhost:3000/equipamentos/1`
-**Método:** `GET`
-
-**Respostas esperadas:**
-- `200` — retorna o equipamento encontrado.
-- `404 Not Found` — retorna `{ "erro": "Equipamento não encontrado." }` se o ID não existir.
-
----
-
-### 4. Editar um equipamento — `PUT /equipamentos/:id`
-
-Atualiza um equipamento existente. Envie somente os campos que deseja alterar.
-
-**URL:** `http://localhost:3000/equipamentos/1`
-**Método:** `PUT`
-
+**URL:** `http://localhost:3000/login`
 **Body (JSON):**
-
 ```json
 {
-  "quantidade": 5,
-  "status": "em manutenção"
+  "email": "carlos@email.com",
+  "senha": "123456"
 }
 ```
 
-**Respostas esperadas:**
-- `200` — retorna o equipamento atualizado.
-- `404 Not Found` — se o ID não existir.
-
----
-
-### 5. Excluir um equipamento — `DELETE /equipamentos/:id`
-
-Remove um equipamento pelo ID.
-
-**URL:** `http://localhost:3000/equipamentos/1`
-**Método:** `DELETE`
-
-**Respostas esperadas:**
-- `200` — retorna `{ "mensagem": "Equipamento removido com sucesso.", "equipamento": {...} }`.
-- `404 Not Found` — se o ID não existir.
-
----
-
-## Exemplos de JSON para `POST` e `PUT`
-
-**Exemplo de `POST`:**
+**Resposta (200):**
 ```json
 {
-  "nome": "Detector de fumaça",
-  "categoria": "Prevenção de incêndio",
-  "fabricante": "Honeywell",
-  "quantidade": 25,
-  "status": "disponível"
+  "mensagem": "Login realizado com sucesso.",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC...",
+  "usuario": { "id": 1, "nome": "Carlos Silva", "email": "carlos@email.com" }
 }
 ```
 
-**Exemplo de `PUT`:**
+- O `token` é um **JWT** (crachá digital) válido por **10 horas**.
+- Guarde esse token para usar nas rotas protegidas.
+- Se o e-mail/senha estiver errado, retorna `401`.
+
+---
+
+## Como usar o token no Insomnia
+
+1. Abra `POST /login`, execute e copie o `token` retornado.
+2. Em qualquer rota protegida (ex.: `GET /equipamentos`):
+   - Aba **Authorization**.
+   - Tipo **Bearer Token**.
+   - Cole o token no campo **Token**.
+
+> Isso envia o cabeçalho: `Authorization: Bearer <seu-token>`
+
+**Exemplo sem token:** `GET /equipamentos` → `401 Acesso negado.`
+**Com token válido:** `GET /equipamentos` → `200` com a lista.
+
+---
+
+## Como fazer upload de imagem
+
+**`POST /upload`** — exige token. Aceita **apenas imagens (JPEG, PNG, GIF, WebP, BMP)** de até **5 MB**.
+
+1. No Insomnia, crie a requisição `POST http://localhost:3000/upload`.
+2. Altere o tipo do corpo para **Multipart Form**.
+3. Adicione um campo chamado `imagem`.
+4. Selecione um arquivo de imagem nesse campo.
+5. Informe o token na aba **Authorization**.
+
+**Resposta (201):**
 ```json
 {
-  "quantidade": 8,
-  "status": "em manutenção"
+  "mensagem": "Imagem enviada com sucesso.",
+  "caminhoArquivo": "C:\\...\\src\\uploads\\1699999999999-foto.png",
+  "nomeArquivo": "1699999999999-foto.png",
+  "tamanhoBytes": 20480
 }
 ```
 
----
-
-## Mensagens de erro
-
-A API retorna mensagens de erro claras nos seguintes casos:
-
-| Situação                                    | Status | Mensagem                                      |
-|---------------------------------------------|--------|-----------------------------------------------|
-| Faltam `nome`, `categoria` ou `fabricante`  | 400    | Os campos nome, categoria e fabricante são obrigatórios. |
-| Faltou `quantidade` na criação              | 400    | O campo quantidade é obrigatório.             |
-| ID não encontrado (`GET` / `PUT` / `DELETE`)| 404    | Equipamento não encontrado.                    |
+> O arquivo é salvo na pasta `src/uploads/`.
+> Arquivo que não for imagem → `400`. Arquivo acima de 5 MB → `400`.
 
 ---
 
-## Resumo das rotas
+## Como acessar o Swagger
 
-| Método | Rota                  | Descrição                        |
-|--------|-----------------------|----------------------------------|
-| POST   | `/equipamentos`        | Cadastra um novo equipamento     |
-| GET    | `/equipamentos`        | Lista todos os equipamentos      |
-| GET    | `/equipamentos/:id`    | Busca um equipamento pelo ID     |
-| PUT    | `/equipamentos/:id`    | Edita um equipamento existente   |
-| DELETE | `/equipamentos/:id`    | Exclui um equipamento pelo ID    |
+Abra **http://localhost:3000/api-docs** no navegador. Lá você encontra:
+
+- Todas as rotas documentadas (método, URL e descrição).
+- Botão **Try it out** para testar diretamente.
+- Exemplos de requisição/resposta.
+- Rotas protegidas indicam que exigem **Bearer Token**.
+- Para usar as rotas protegidas, clique em **Authorize** e informe `Bearer <token>`.
 
 ---
 
-## Nota
+## Mensagens de erro mais comuns
 
-Recursos como autenticação (login, JWT), banco de dados, upload de imagens e frontend **não estão implementados**, pois pertencem à **AV2**.
+| Situação                                 | Status | Mensagem                                        |
+|------------------------------------------|--------|------------------------------------------------|
+| Faltou nome/email/senha no cadastro      | 400    | Os campos nome, email e senha são obrigatórios. |
+| E-mail já cadastrado                     | 400    | E-mail já cadastrado.                           |
+| E-mail ou senha errados no login         | 401    | E-mail ou senha incorretos.                     |
+| Requisição sem token                     | 401    | Acesso negado. Informe um token...              |
+| Token inválido ou expirado               | 401    | Token inválido ou expirado.                     |
+| Faltaram campos no equipamento           | 400    | Os campos nome, categoria e fabricante...       |
+| Equipamento não encontrado               | 404    | Equipamento não encontrado.                     |
+| Arquivo não é imagem                     | 400    | Formato de arquivo inválido...                  |
+| Arquivo maior que 5 MB                   | 400    | Arquivo muito grande. O limite máximo é 5 MB.   |
+
+---
+
+## Resumo
+
+- A **AV1** (CRUD de equipamentos) foi **mantida**, agora **protegida por token**.
+- A **AV2** adicionou usuários, login JWT, middleware, upload e Swagger.
+- Tudo sem banco de dados: os dados ficam em **memória** enquanto o servidor roda.
+- O projeto continua simples e fácil de explicar em uma apresentação.

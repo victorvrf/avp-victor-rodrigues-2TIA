@@ -7,6 +7,10 @@ node_modules/
 # Logs
 *.log
 
+# Uploads (mantém a pasta, mas ignora os arquivos enviados)
+uploads/*
+!uploads/.gitkeep
+
 # Sistema operacional
 .DS_Store
 Thumbs.db
