@@ -7,9 +7,9 @@ node_modules/
 # Logs
 *.log
 
-# Uploads (mantém a pasta, mas ignora os arquivos enviados)
-uploads/*
-!uploads/.gitkeep
+# Uploads (mantém a pasta, mas ignora as imagens enviadas)
+src/uploads/*
+!src/uploads/.gitkeep
 
 # Sistema operacional
 .DS_Store

@@ -9,8 +9,16 @@
 const jwt = require('jsonwebtoken');
 
 // Chave secreta usada para assinar e validar o token.
-// Em produção ela ficaria em uma variável de ambiente (.env).
+// Ela vem do arquivo .env (veja .env.example). Caso o arquivo .env
+// não exista, é usada a chave de desenvolvimento abaixo, para que o
+// projeto continue funcionando durante a apresentação.
 const JWT_SECRET = process.env.JWT_SECRET || 'segredo-av2-desenvolvimento-web';
+
+if (!process.env.JWT_SECRET) {
+  console.warn(
+    '[aviso] JWT_SECRET não definido no .env — usando a chave de desenvolvimento padrão.'
+  );
+}
 
 /**
  * Middleware: verifica o token enviado no cabeçalho "Authorization".

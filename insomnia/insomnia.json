@@ -1,0 +1,761 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-09-16T21:30:23.792Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_avp_victor_2tia",
+      "parentId": null,
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "name": "avp-victor-rodrigues-2TIA",
+      "description": "Colecao de testes da API de Equipamentos de Seguranca (AV1 + AV2).",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_avp_victor_base",
+      "parentId": "wrk_avp_victor_2tia",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "name": "Base Environment",
+      "data": {
+        "URL_BASE": "http://localhost:3000",
+        "token": "{% response 'body', 'req_login', 'b64::JC50b2tlbg==::46b', 'never', 60 %}"
+      },
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1789594223792,
+      "_type": "environment"
+    },
+    {
+      "_id": "fld_autenticacao",
+      "parentId": "wrk_avp_victor_2tia",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "name": "AV2 - Autenticação",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1789594223792,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_usuario_criar",
+      "parentId": "fld_autenticacao",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/usuarios",
+      "name": "Cadastrar Usuário",
+      "description": "Cria o usuario. A senha e criptografada com bcrypt antes de ser guardada. Nao precisa de token.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Victor\",\n  \"email\": \"victor@email.com\",\n  \"senha\": \"123456\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1789594223791,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_login",
+      "parentId": "fld_autenticacao",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/login",
+      "name": "Login",
+      "description": "RODE ESTE PRIMEIRO. Ele gera o token JWT e preenche automaticamente a variavel token do ambiente. Nao precisa de token.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"victor@email.com\",\n  \"senha\": \"123456\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1789594223790,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_usuario_listar",
+      "parentId": "fld_autenticacao",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/usuarios",
+      "name": "Listar Usuários",
+      "description": "Lista os usuarios SEM expor a senha. Exige token (Bearer).",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223789,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_equipamentos",
+      "parentId": "wrk_avp_victor_2tia",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "name": "AV1 - Equipamentos",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1789594223788,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_equip_listar",
+      "parentId": "fld_equipamentos",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos",
+      "name": "Listar Equipamentos",
+      "description": "Lista todos os equipamentos cadastrados. Exige token.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223787,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_equip_buscar",
+      "parentId": "fld_equipamentos",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos/1",
+      "name": "Buscar Equipamento por ID",
+      "description": "Busca um equipamento pelo ID. Exige token. ID inexistente devolve 404.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223786,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_equip_criar",
+      "parentId": "fld_equipamentos",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos",
+      "name": "Cadastrar Equipamento",
+      "description": "Cadastra um novo equipamento (id unico gerado automaticamente). Exige token.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Alarme\",\n  \"categoria\": \"Segurança\",\n  \"fabricante\": \"Intelbras\",\n  \"quantidade\": 5,\n  \"status\": \"disponível\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223785,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_equip_atualizar",
+      "parentId": "fld_equipamentos",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos/4",
+      "name": "Atualizar Equipamento",
+      "description": "Edita o equipamento de id 4. Envie APENAS os campos que quer alterar. Exige token.",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Alarme Residencial\",\n  \"quantidade\": 9,\n  \"status\": \"em manutenção\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223784,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_equip_excluir",
+      "parentId": "fld_equipamentos",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos/4",
+      "name": "Excluir Equipamento",
+      "description": "Exclui o equipamento de id 4. Exige token.",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223783,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_upload",
+      "parentId": "wrk_avp_victor_2tia",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "name": "AV2 - Upload",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1789594223782,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_upload",
+      "parentId": "fld_upload",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/upload",
+      "name": "Upload de Imagem",
+      "description": "Envia uma imagem. Exige token. NAO adicione o header Content-Type na mao: o Insomnia precisa gerar esse cabecalho sozinho (com o boundary).",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_1",
+            "name": "imagem",
+            "value": "",
+            "description": "Selecione uma IMAGEM (png, jpg, gif, webp ou bmp) de ate 5 MB. Use a imagem da pasta exemplos/ do projeto.",
+            "type": "file",
+            "disabled": false,
+            "fileName": "",
+            "multiline": false
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223781,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_upload_sem_token",
+      "parentId": "fld_upload",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/upload",
+      "name": "Upload SEM token (401)",
+      "description": "Deve dar 401: sem token o middleware bloqueia o upload.",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_2",
+            "name": "imagem",
+            "value": "",
+            "description": "Selecione a mesma imagem valida da pasta exemplos/.",
+            "type": "file",
+            "disabled": false,
+            "fileName": "",
+            "multiline": false
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1789594223780,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_upload_invalido",
+      "parentId": "fld_upload",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/upload",
+      "name": "Upload arquivo inválido (400)",
+      "description": "Deve dar 400: o servidor valida o TIPO do arquivo.",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_3",
+            "name": "imagem",
+            "value": "",
+            "description": "Selecione um arquivo que NAO seja imagem, ex.: um .txt ou .pdf.",
+            "type": "file",
+            "disabled": false,
+            "fileName": "",
+            "multiline": false
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223779,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_upload_grande",
+      "parentId": "fld_upload",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/upload",
+      "name": "Upload imagem acima de 5 MB (400)",
+      "description": "Deve dar 400: o servidor valida o TAMANHO do arquivo.",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_4",
+            "name": "imagem",
+            "value": "",
+            "description": "Selecione uma imagem MAIOR que 5 MB (ex.: um print bem grande).",
+            "type": "file",
+            "disabled": false,
+            "fileName": "",
+            "multiline": false
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223778,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_documentacao",
+      "parentId": "wrk_avp_victor_2tia",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "name": "AV2 - Documentação",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1789594223777,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_swagger",
+      "parentId": "fld_documentacao",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/api-docs",
+      "name": "Swagger",
+      "description": "Documentacao interativa da API. Rodar o GET /api-docs devolve a pagina HTML do Swagger (abra tambem no navegador).",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1789594223776,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_raiz",
+      "parentId": "fld_documentacao",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/",
+      "name": "Rota Raiz",
+      "description": "Rota raiz: mostra que o servidor esta no ar.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1789594223775,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_erros",
+      "parentId": "wrk_avp_victor_2tia",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "name": "AV2 - Testes de Erro (401, 400 e 404)",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1789594223774,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_erro_sem_token",
+      "parentId": "fld_erros",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos",
+      "name": "Equipamentos SEM token (401)",
+      "description": "Mostra o middleware bloqueando: 401 Acesso negado.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1789594223773,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_erro_token_invalido",
+      "parentId": "fld_erros",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos",
+      "name": "Token inválido (401)",
+      "description": "Token que nao existe: 401 Token invalido ou expirado.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "123",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223772,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_erro_login",
+      "parentId": "fld_erros",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/login",
+      "name": "Login incorreto (401)",
+      "description": "Senha errada: 401 E-mail ou senha incorretos.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"victor@email.com\",\n  \"senha\": \"senha-errada\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1789594223771,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_erro_cadastro_incompleto",
+      "parentId": "fld_erros",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/usuarios",
+      "name": "Cadastro incompleto (400)",
+      "description": "Faltando a senha: 400 Os campos nome, email e senha sao obrigatorios.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Teste\",\n  \"email\": \"teste@email.com\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1789594223770,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_erro_email_repetido",
+      "parentId": "fld_erros",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/usuarios",
+      "name": "E-mail repetido (400)",
+      "description": "Rode DEPOIS de ja ter cadastrado o usuario: 400 E-mail ja cadastrado.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Victor\",\n  \"email\": \"victor@email.com\",\n  \"senha\": \"123456\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1789594223769,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_erro_equip_invalido",
+      "parentId": "fld_erros",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos",
+      "name": "Equipamento sem campos obrigatórios (400)",
+      "description": "Faltando categoria/fabricante/quantidade: 400.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Incompleto\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "description": "",
+          "disabled": false
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223768,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_erro_equip_nao_encontrado",
+      "parentId": "fld_erros",
+      "modified": 1789594223792,
+      "created": 1789594223792,
+      "url": "{{ URL_BASE }}/equipamentos/999",
+      "name": "Equipamento não encontrado (404)",
+      "description": "ID que nao existe: 404 Equipamento nao encontrado.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}",
+        "prefix": ""
+      },
+      "metaSortKey": -1789594223767,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    }
+  ]
+}
