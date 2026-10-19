@@ -14,3 +14,4 @@ src/uploads/*
 # Sistema operacional
 .DS_Store
 Thumbs.db
+/generated/prisma
