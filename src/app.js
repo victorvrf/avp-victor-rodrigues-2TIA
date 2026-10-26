@@ -26,6 +26,7 @@
 require('dotenv/config');
 
 const express = require('express');
+const prisma = require('../prisma/prisma');
 
 // Configuração do Swagger (documentação da API)
 const { swaggerSpec, swaggerUi } = require('./docs/swagger');
@@ -111,7 +112,21 @@ app.use((err, req, res, next) => {
 // Inicia o servidor na porta definida no .env (ou 3000)
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log(`Swagger: http://localhost:${PORT}/api-docs`);
-});
+
+async function iniciarServidor() {
+  try {
+    await prisma.$connect();
+    console.log('Conexão com o banco de dados estabelecida com sucesso.');
+
+    app.listen(PORT, () => {
+      console.log(`Servidor rodando em http://localhost:${PORT}`);
+      console.log(`Swagger: http://localhost:${PORT}/api-docs`);
+    });
+  } catch (error) {
+    console.error('Erro ao conectar ao banco de dados:', error.message);
+    await prisma.$disconnect();
+    process.exitCode = -1;
+  }
+}
+
+iniciarServidor();

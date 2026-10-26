@@ -1,20 +1,23 @@
 # Sistema de Gerenciamento de Equipamentos de Segurança
 
-API REST desenvolvida em **Node.js + Express** para cadastrar e gerenciar equipamentos de segurança.
+API REST desenvolvida em **Node.js + Express** para cadastrar e gerenciar equipamentos de segurança, com **persistência de dados** via **Prisma ORM + MySQL**, **cadastro/login de usuários** com **JWT** e proteção de rotas.
 
-> Trabalho **AV2** da disciplina **Desenvolvimento de Websites** — evolução direta do projeto da **AV1**.
-> Os dados são armazenados **temporariamente em memória** (somente enquanto o servidor está ativo).
+> Trabalho **AV1** (Backend) da disciplina **Desenvolvimento de Websites** — evolução direta do projeto do 3o bimestre.
+> Os dados são persistidos em **banco de dados MySQL** através do **Prisma ORM**, permanecendo disponíveis após reinicialização do servidor.
 
 ---
 
-## O que a AV2 adicionou (além do CRUD da AV1)
+## O que a AV1 implementa
 
-- Cadastro de usuários com **senha criptografada** (`bcrypt`)
-- **Login** com geração de **token JWT** (crachá digital)
-- **Middleware** que protege as rotas de equipamentos (exige token)
-- **Upload de imagens** (`Multer`) com validação de tipo e tamanho
+- **Arquitetura MVC**: separação entre `src/routes/`, `src/controllers/` e acesso aos dados via Prisma
+- **Banco de dados relacional**: MySQL com Prisma ORM (modelos `Equipamentos` e `Usuarios`)
+- **CRUD completo de equipamentos**: cadastrar, listar, consultar por ID, atualizar e excluir — todos persistidos no banco
+- **Cadastro de usuários**: validação de campos, senha com hash (`bcrypt`), e-mail único
+- **Login**: verificação de credenciais e geração de **token JWT**
+- **Middleware de autenticação**: protege rotas que exigem token válido
+- **Upload de imagens** (`Multer`) com validação de tipo e tamanho (AV2)
 - **Swagger** (documentação interativa em `/api-docs`)
-- CRUD da **AV1** mantido e agora **protegido por autenticação**
+- Rotas de equipamentos protegidas por autenticação (token)
 
 ---
 
@@ -23,47 +26,57 @@ API REST desenvolvida em **Node.js + Express** para cadastrar e gerenciar equipa
 | Tecnologia | Versão | Função |
 |------------|--------|--------|
 | Express | ^4.21.2 | Servidor HTTP e rotas |
+| Prisma / @prisma/client | ^7.10.0 | ORM e cliente do banco de dados |
 | bcrypt | ^6.0.0 | Criptografar a senha dos usuários |
 | jsonwebtoken | ^9.0.3 | Gerar e validar o token JWT |
+| dotenv | ^17.4.2 | Carregar variáveis de ambiente |
 | multer | ^2.2.0 | Upload de arquivos (imagens) |
 | swagger-ui-express | ^5.0.1 | Interface web do Swagger |
 | swagger-jsdoc | ^6.3.0 | Montar a especificação OpenAPI |
+| nodemon | ^3.1.14 | Reinício automático em desenvolvimento |
 
 ---
 
-## Estrutura do projeto
-
-A estrutura segue a sugestão da proposta da AV1/AV2 (`src/routes/`, `middlewares/`, `uploads/`, `docs/`, `app.js`):
+## Estrutura do projeto (MVC)
 
 ```
 projeto/
+├── prisma/
+│   ├── schema.prisma        # Modelos do banco de dados (Equipamentos, Usuarios)
+│   └── prisma.js            # Instância do PrismaClient
+├── generated/prisma/        # Cliente Prisma gerado (não versionar)
 ├── src/
-│   ├── app.js                      # Cria o servidor e monta as rotas
-│   ├── data/
-│   │   └── database.js             # "Banco de dados" em memória (listas + IDs únicos)
-│   ├── routes/                     # Rotas separadas por recurso
-│   │   ├── equipamentos.js         # CRUD da AV1 (protegido por token)
-│   │   ├── usuarios.js             # POST/GET de usuários (senha com bcrypt)
-│   │   ├── login.js                # POST /login (gera o token JWT)
-│   │   └── upload.js               # POST /upload (envio de imagem)
+│   ├── app.js               # Ponto de entrada: cria servidor, conecta DB, monta rotas
+│   ├── controllers/
+│   │   ├── equipamentosController.js   # Regras de negócio + validações do CRUD
+│   │   ├── usuariosController.js       # Cadastro e listagem de usuários
+│   │   └── loginController.js          # Login e geração de JWT
+│   ├── models/
+│   │   ├── equipamentomodel.js         # Camada de dados (Prisma) para equipamentos
+│   ├── usuariosmodel.js            # Camada de dados (Prisma) para usuários
+│   └── loginmodel.js               # Camada de dados (Prisma) para autenticação/login
+│   ├── routes/
+│   │   ├── equipamentos.js   # Rotas do CRUD (protegidas por token)
+│   │   ├── usuarios.js       # Cadastro/listagem de usuários
+│   │   ├── login.js          # Login (gera JWT)
+│   │   └── upload.js         # Upload de imagem (AV2)
 │   ├── middlewares/
-│   │   ├── auth.js                 # Middleware de autenticação (token JWT)
-│   │   └── upload.js               # Middleware do Multer (tipo + tamanho)
+│   │   ├── auth.js           # Middleware de autenticação JWT
+│   │   └── upload.js         # Middleware Multer (tipo + tamanho)
 │   ├── docs/
-│   │   └── swagger.js              # Configuração do Swagger (OpenAPI)
-│   └── uploads/                    # Pasta onde as imagens são salvas
-├── exemplos/
-│   └── foto-teste.png              # Imagem usada no teste de upload
+│   │   └── swagger.js        # Configuração do Swagger (OpenAPI)
+│   └── uploads/              # Imagens enviadas
 ├── insomnia/
-│   └── insomnia.json               # Coleção de testes do Insomnia (importável)
-├── .env.example                    # Modelo das variáveis de ambiente
+│   └── insomnia.json         # Coleção de testes do Insomnia (importável)
+├── .env.example              # Modelo das variáveis de ambiente
+├── .env                      # Variáveis de ambiente locais (não versionar)
 ├── package.json
 ├── .gitignore
 └── README.md
 ```
 
-> O arquivo `src/app.js` é o **ponto de entrada** (`npm start`). Ele apenas cria o servidor,
-> liga o Swagger e "monta" os arquivos da pasta `src/routes`.
+> `src/app.js` é o **ponto de entrada** (`npm start`). Ele carrega o `.env`, conecta ao banco via Prisma,
+> monta o Swagger e registra as rotas de cada recurso.
 
 ---
 
@@ -71,43 +84,75 @@ projeto/
 
 ### 1. Instalar as dependências
 
-```bash
+```powershell
 npm install
 ```
 
-### 2. Configurar as variáveis de ambiente
+### 2. Configurar o banco de dados MySQL
+
+Você precisa de um servidor MySQL rodando localmente (ou remoto) e um banco criado.
+
+Exemplo com MySQL local:
+
+```powershell
+# No MySQL, crie o banco e um usuário:
+CREATE DATABASE dwb_victor_rodrigues_2ati;
+CREATE USER 'usuario'@'localhost' IDENTIFIED BY 'senha';
+GRANT ALL PRIVILEGES ON dwb_victor_rodrigues_2ati.* TO 'usuario'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+### 3. Configurar as variáveis de ambiente
 
 Copie o arquivo de exemplo e ajuste os valores:
 
-```bash
+```powershell
 copy .env.example .env
 ```
 
-Conteúdo do `.env`:
+Edite o `.env` com os dados reais do seu banco MySQL:
 
-```
+```env
 PORT=3000
-JWT_SECRET=um-segredo-bem-dificil-de-adivinhar
+JWT_SECRET=uma-chave-secreta-forte-e-dificil-de-adivinhar
+DATABASE_URL="mysql://usuario:senha@localhost:3306/dwb_victor_rodrigues_2ati"
 ```
 
 > O arquivo `.env` **não vai para o GitHub** (está no `.gitignore`).
-> Se ele não existir, o servidor ainda funciona usando a chave de desenvolvimento padrão do código.
+> O `.env.example` serve de modelo e pode ser versionado sem credenciais reais.
 
-### 3. Iniciar o servidor
+### 4. Gerar o cliente Prisma
 
-```bash
+```powershell
+npx prisma generate
+```
+
+### 5. Criar e executar as migrations no banco
+
+```powershell
+npx prisma migrate dev --name init
+```
+
+Este comando cria as tabelas `Equipamentos` e `Usuarios` no banco MySQL com base no `prisma/schema.prisma`.
+
+### 6. Iniciar o servidor
+
+```powershell
 npm start
 ```
 
 Para desenvolvimento com reinício automático (nodemon):
 
-```bash
+```powershell
 npm run dev
 ```
 
-O servidor fica disponível em: `http://localhost:3000`
+O servidor ficará disponível em **http://localhost:3000**  
+Swagger em **http://localhost:3000/api-docs**
 
-### 4. Acessar o Swagger
+---
+
+## Rotas da AV1 (CRUD de equipamentos)
 
 Abra no navegador: **http://localhost:3000/api-docs**
 
@@ -271,8 +316,8 @@ request `Login`**. Ou seja:
 > Se preferir, também dá para colar o token na mão: `Ctrl+E` (Manage Environments) →
 > variável `token` → cole o valor devolvido pelo Login.
 
-> ⚠️ **E se o login der 401?** Os dados ficam em memória. Se você reiniciou o servidor,
-> o usuário foi apagado — rode **`Cadastrar Usuário`** de novo antes do Login.
+> ⚠️ **E se o login der 401?** Verifique se o usuário foi cadastrado (os dados persistem no banco).
+> Se não existir, rode **`Cadastrar Usuário`** antes do Login.
 
 ---
 
@@ -307,25 +352,23 @@ Abra **http://localhost:3000/api-docs** no navegador. Lá você encontra:
 
 ---
 
-## Critérios da proposta da AV1/AV2 — onde está cada um
+## Critérios de avaliação da AV1
 
-| Critério da proposta | Peso | Onde está no código |
-|----------------------|------|---------------------|
-| Estrutura do servidor e organização das rotas | 20% | `src/app.js` + `src/routes/` |
-| Armazenamento em memória (lista de objetos, ID único) | 20% | `src/data/database.js` |
-| Funcionamento completo do CRUD | 40% | `src/routes/equipamentos.js` |
-| Validação no painel de testes (Insomnia/Postman) | 20% | Rotas documentadas abaixo |
-| Cadastro e login | 20% | `src/routes/usuarios.js` + `src/routes/login.js` |
-| Segurança de senhas com bcrypt | 20% | `bcrypt.hash` / `bcrypt.compare` em `usuarios.js` e `login.js` |
-| Middleware e proteção de rotas | 25% | `src/middlewares/auth.js` (aplicado em `equipamentos.js` e `upload.js`) |
-| Upload e validação de imagem | 20% | `src/routes/upload.js` + `src/middlewares/upload.js` |
-| Documentação básica com Swagger | 15% | `src/docs/swagger.js` (acesso em `/api-docs`) |
+| Critério | Peso máximo | Onde está no código |
+|----------|-------------|---------------------|
+| Organização MVC (rotas, controllers, acesso a dados) | 1,0 | `src/routes/`, `src/controllers/`, `prisma/prisma.js` |
+| Integração com banco/ORM (Prisma + MySQL) | 1,25 | `prisma/schema.prisma`, `prisma/prisma.js` |
+| CRUD funcional (cadastro, consulta, atualização, exclusão) | 1,25 | `src/controllers/equipamentosController.js` |
+| Cadastro, login e JWT (senha com hash, token, proteção de rotas) | 1,0 | `src/controllers/usuariosController.js`, `loginController.js`, `src/middlewares/auth.js` |
+| Validações, testes e funcionamento geral | 0,5 | Controllers + Insomnia collection + este README |
+| **Total** | **5,0** | |
 
 ---
 
 ## Resumo
 
-- A **AV1** (CRUD de equipamentos) foi **mantida**, agora **protegida por token**.
-- A **AV2** adicionou usuários, login JWT, middleware, upload e Swagger.
-- Tudo sem banco de dados: os dados ficam em **memória** enquanto o servidor roda.
-- O projeto continua simples e fácil de explicar em uma apresentação.
+- A **AV1** (CRUD de equipamentos com persistência) está implementada com **Prisma ORM + MySQL**, arquitetura **MVC** e **autenticação JWT**.
+- Os dados persistem no banco mesmo após reiniciar o servidor.
+- O cadastro de usuários é separado do CRUD de equipamentos, conforme exigido pela proposta.
+- Rotas de alteração de dados (POST, PUT, DELETE) estão protegidas por token.
+- O projeto está pronto para a **AV2** (interface React integrada à API).
