@@ -15,3 +15,6 @@ src/uploads/*
 .DS_Store
 Thumbs.db
 /generated/prisma
+
+# Repositorio de referencia baixado (nao versionar)
+avp-lucas-perine-2TIA-main/
