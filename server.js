@@ -14,11 +14,11 @@
 // A LÓGICA de cada rota fica nos arquivos da pasta src/routes:
 //   src/routes/equipamentos.js -> CRUD da AV1 (protegido por token)
 //   src/routes/usuarios.js     -> cadastro/listagem de usuários
-//   src/routes/login.js        -> login e geração do token JWT
+//   src/routes/auth.js         -> autenticação e geração do token JWT
 //   src/routes/upload.js       -> upload de imagem
 //
 // Os dados em memória ficam em src/data/database.js e a
-// autenticação em src/middlewares/auth.js.
+// autenticação em src/middlewares/autenticar.js.
 // ============================================================
 
 // Carrega as variáveis do arquivo .env (PORT, JWT_SECRET) para
@@ -26,16 +26,16 @@
 require('dotenv/config');
 
 const express = require('express');
-const prisma = require('../prisma/prisma');
+const prisma = require('./src/config/prisma');
 
 // Configuração do Swagger (documentação da API)
-const { swaggerSpec, swaggerUi } = require('./docs/swagger');
+const { swaggerSpec, swaggerUi } = require('./src/config/swagger');
 
 // Rotas da aplicação
-const rotasEquipamentos = require('./routes/equipamentos');
-const rotasUsuarios = require('./routes/usuarios');
-const rotasLogin = require('./routes/login');
-const rotasUpload = require('./routes/upload');
+const rotasEquipamentos = require('./src/routes/equipamentos');
+const rotasUsuarios = require('./src/routes/usuarios');
+const rotasAuth = require('./src/routes/auth');
+const rotasUpload = require('./src/routes/upload');
 
 // Cria o servidor
 const app = express();
@@ -62,10 +62,10 @@ app.get('/', (req, res) => {
 });
 
 // ============================================================
-// ROTAS DA AV2 (usuários, login e upload)
+// ROTAS DA AV2 (usuários, auth/login e upload)
 // ============================================================
 app.use('/usuarios', rotasUsuarios);
-app.use('/login', rotasLogin);
+app.use('/auth', rotasAuth);
 app.use('/upload', rotasUpload);
 
 // ============================================================

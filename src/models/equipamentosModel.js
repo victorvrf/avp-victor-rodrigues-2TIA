@@ -1,4 +1,4 @@
-const prisma = require('../prisma/prisma');
+const prisma = require('../config/prisma');
 
 /**
  * Camada de dados (Model) para Equipamentos.

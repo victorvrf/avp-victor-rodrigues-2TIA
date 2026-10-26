@@ -1,4 +1,4 @@
-const equipamentoModel = require('../models/equipamentomodel');
+const equipamentoModel = require('../models/equipamentosModel');
 
 function validarId(id) {
   const numero = Number(id);

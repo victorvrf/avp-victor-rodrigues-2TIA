@@ -4,11 +4,11 @@
 // Recebe email e senha, confere a senha com o bcrypt e devolve
 // um token JWT (crachá digital) que libera as rotas protegidas.
 //
-// Montado em: /login  (veja src/app.js)
+// Montado em: /auth  (veja server.js)
 // ============================================================
 
 const express = require('express');
-const controller = require('../controllers/loginController');
+const controller = require('../controllers/authController');
 
 const router = express.Router();
 

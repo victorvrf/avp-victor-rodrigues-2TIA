@@ -4,11 +4,11 @@
 // Cadastro de usuários com senha protegida por bcrypt e listagem
 // dos usuários (sem expor a senha).
 //
-// Montado em: /usuarios  (veja src/app.js)
+// Montado em: /usuarios  (veja server.js)
 // ============================================================
 
 const express = require('express');
-const { autenticar } = require('../middlewares/auth');
+const { autenticar } = require('../middlewares/autenticar');
 const controller = require('../controllers/usuariosController');
 
 const router = express.Router();

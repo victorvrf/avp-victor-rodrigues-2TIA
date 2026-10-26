@@ -8,11 +8,11 @@
 // o requisito: "as rotas criadas na AV1 deverão receber uma camada
 // de proteção".
 //
-// Montado em: /equipamentos  (veja src/app.js)
+// Montado em: /equipamentos  (veja server.js)
 // ============================================================
 
 const express = require('express');
-const { autenticar } = require('../middlewares/auth');
+const { autenticar } = require('../middlewares/autenticar');
 const controller = require('../controllers/equipamentosController');
 
 const router = express.Router();

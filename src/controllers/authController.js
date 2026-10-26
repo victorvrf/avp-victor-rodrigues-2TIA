@@ -1,14 +1,14 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const loginModel = require('../models/loginmodel');
-const { JWT_SECRET } = require('../middlewares/auth');
+const authModel = require('../models/authModel');
+const { JWT_SECRET } = require('../middlewares/autenticar');
 const { respostaPublica } = require('./usuariosController');
 
 async function entrar(req, res) {
   const { email, senha } = req.body;
   if (!email || !senha) return res.status(400).json({ erro: 'Informe email e senha.' });
 
-  const usuario = await loginModel.buscarPorEmailComSenha(email);
+  const usuario = await authModel.buscarPorEmailComSenha(email);
   if (!usuario || !(await bcrypt.compare(senha, usuario.senha))) {
     return res.status(401).json({ erro: 'E-mail ou senha incorretos.' });
   }

@@ -43,29 +43,32 @@ API REST desenvolvida em **Node.js + Express** para cadastrar e gerenciar equipa
 projeto/
 ├── prisma/
 │   ├── schema.prisma        # Modelos do banco de dados (Equipamentos, Usuarios)
-│   └── prisma.js            # Instância do PrismaClient
+│   └── migrations/          # Migrações do banco de dados
 ├── generated/prisma/        # Cliente Prisma gerado (não versionar)
 ├── src/
-│   ├── app.js               # Ponto de entrada: cria servidor, conecta DB, monta rotas
+│   ├── config/
+│   │   ├── prisma.js        # Instância do PrismaClient
+│   │   └── swagger.js       # Configuração do Swagger (OpenAPI)
 │   ├── controllers/
 │   │   ├── equipamentosController.js   # Regras de negócio + validações do CRUD
 │   │   ├── usuariosController.js       # Cadastro e listagem de usuários
-│   │   └── loginController.js          # Login e geração de JWT
+│   │   └── authController.js           # Autenticação e geração de JWT
 │   ├── models/
-│   │   ├── equipamentomodel.js         # Camada de dados (Prisma) para equipamentos
+│   │   ├── equipamentosModel.js        # Camada de dados (Prisma) para equipamentos
 │   ├── usuariosmodel.js            # Camada de dados (Prisma) para usuários
-│   └── loginmodel.js               # Camada de dados (Prisma) para autenticação/login
+│   └── authModel.js               # Camada de dados (Prisma) para autenticação/login
 │   ├── routes/
 │   │   ├── equipamentos.js   # Rotas do CRUD (protegidas por token)
 │   │   ├── usuarios.js       # Cadastro/listagem de usuários
-│   │   ├── login.js          # Login (gera JWT)
+│   │   ├── auth.js           # Login (gera JWT)
 │   │   └── upload.js         # Upload de imagem (AV2)
 │   ├── middlewares/
-│   │   ├── auth.js           # Middleware de autenticação JWT
+│   │   ├── autenticar.js     # Middleware de autenticação JWT
 │   │   └── upload.js         # Middleware Multer (tipo + tamanho)
-│   ├── docs/
-│   │   └── swagger.js        # Configuração do Swagger (OpenAPI)
+│   ├── data/
+│   │   └── database.js       # Dados em memória (fallback)
 │   └── uploads/              # Imagens enviadas
+├── server.js               # Ponto de entrada: cria servidor, conecta DB, monta rotas
 ├── insomnia/
 │   └── insomnia.json         # Coleção de testes do Insomnia (importável)
 ├── .env.example              # Modelo das variáveis de ambiente
@@ -75,7 +78,7 @@ projeto/
 └── README.md
 ```
 
-> `src/app.js` é o **ponto de entrada** (`npm start`). Ele carrega o `.env`, conecta ao banco via Prisma,
+> `server.js` é o **ponto de entrada** (`npm start`). Ele carrega o `.env`, conecta ao banco via Prisma,
 > monta o Swagger e registra as rotas de cada recurso.
 
 ---
@@ -356,10 +359,10 @@ Abra **http://localhost:3000/api-docs** no navegador. Lá você encontra:
 
 | Critério | Peso máximo | Onde está no código |
 |----------|-------------|---------------------|
-| Organização MVC (rotas, controllers, acesso a dados) | 1,0 | `src/routes/`, `src/controllers/`, `prisma/prisma.js` |
-| Integração com banco/ORM (Prisma + MySQL) | 1,25 | `prisma/schema.prisma`, `prisma/prisma.js` |
+| Organização MVC (rotas, controllers, acesso a dados) | 1,0 | `src/routes/`, `src/controllers/`, `src/config/prisma.js` |
+| Integração com banco/ORM (Prisma + MySQL) | 1,25 | `prisma/schema.prisma`, `src/config/prisma.js` |
 | CRUD funcional (cadastro, consulta, atualização, exclusão) | 1,25 | `src/controllers/equipamentosController.js` |
-| Cadastro, login e JWT (senha com hash, token, proteção de rotas) | 1,0 | `src/controllers/usuariosController.js`, `loginController.js`, `src/middlewares/auth.js` |
+| Cadastro, login e JWT (senha com hash, token, proteção de rotas) | 1,0 | `src/controllers/usuariosController.js`, `src/controllers/authController.js`, `src/middlewares/autenticar.js` |
 | Validações, testes e funcionamento geral | 0,5 | Controllers + Insomnia collection + este README |
 | **Total** | **5,0** | |
 

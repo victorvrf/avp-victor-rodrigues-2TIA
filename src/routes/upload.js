@@ -5,11 +5,11 @@
 // A validação de TIPO e TAMANHO do arquivo fica no middleware
 // src/middlewares/upload.js.
 //
-// Montado em: /upload  (veja src/app.js)
+// Montado em: /upload  (veja server.js)
 // ============================================================
 
 const express = require('express');
-const { autenticar } = require('../middlewares/auth');
+const { autenticar } = require('../middlewares/autenticar');
 const { uploadImagem } = require('../middlewares/upload');
 
 const router = express.Router();
