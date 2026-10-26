@@ -1,7 +1,8 @@
-require('dotenv').config();
+import 'dotenv/config';
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import { PrismaClient } from "@prisma/client/extension";
 
-const { PrismaClient } = require('@prisma/client');
+const adapter = new PrismaMariaDb();
+const prisma = new PrismaClient({ adapter });
 
-const prisma = new PrismaClient();
-
-module.exports = prisma;
+export default prisma;

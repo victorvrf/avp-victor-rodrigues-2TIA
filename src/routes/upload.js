@@ -1,31 +1,46 @@
-// ============================================================
-// ROTA DE UPLOAD DE IMAGEM (AV2)
-// ============================================================
-// Envia uma imagem para a pasta local "src/uploads/".
-// A validação de TIPO e TAMANHO do arquivo fica no middleware
-// src/middlewares/upload.js.
-//
-// Montado em: /upload  (veja server.js)
-// ============================================================
-
-const express = require('express');
-const { autenticar } = require('../middlewares/autenticar');
-const { uploadImagem } = require('../middlewares/upload');
+import express from "express";
+import autenticar from "../middlewares/autenticar.js";
+import { uploadImagem } from "../middlewares/upload.js";
 
 const router = express.Router();
 
 /**
- * POST /upload
- * Recebe um arquivo de imagem (campo "imagem") e o salva em uploads/.
- * Exige token. Aceita apenas imagens de até 5 MB.
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: Envia uma imagem
+ *     description: Recebe um arquivo de imagem (campo "imagem") e o salva em uploads/. Exige token Bearer. Aceita apenas imagens de até 5 MB.
+ *     tags:
+ *       - Upload
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               imagem:
+ *                 type: string
+ *                 format: binary
+ *                 description: Arquivo de imagem a ser enviado
+ *     responses:
+ *       201:
+ *         description: Imagem enviada com sucesso.
+ *       400:
+ *         description: Arquivo inválido ou muito grande.
+ *       401:
+ *         description: Token ausente ou inválido.
  */
-router.post('/', autenticar, uploadImagem, (req, res) => {
+
+router.post("/", autenticar, uploadImagem, (req, res) => {
   return res.status(201).json({
-    mensagem: 'Imagem enviada com sucesso.',
+    mensagem: "Imagem enviada com sucesso.",
     caminhoArquivo: req.file.path,
     nomeArquivo: req.file.filename,
-    tamanhoBytes: req.file.size
+    tamanhoBytes: req.file.size,
   });
 });
 
-module.exports = router;
+export default router;

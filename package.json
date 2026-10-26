@@ -15,6 +15,7 @@
     "equipamentos"
   ],
   "author": "",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.10.1",

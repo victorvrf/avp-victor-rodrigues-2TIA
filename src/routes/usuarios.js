@@ -1,28 +1,61 @@
-// ============================================================
-// ROTAS DE USUÁRIOS (AV2)
-// ============================================================
-// Cadastro de usuários com senha protegida por bcrypt e listagem
-// dos usuários (sem expor a senha).
-//
-// Montado em: /usuarios  (veja server.js)
-// ============================================================
-
-const express = require('express');
-const { autenticar } = require('../middlewares/autenticar');
-const controller = require('../controllers/usuariosController');
+import express from "express";
+import autenticar from "../middlewares/autenticar.js";
+import { criar, listar } from "../controllers/usuariosController.js";
 
 const router = express.Router();
 
 /**
- * POST /usuarios
- * Cadastra um novo usuário. A senha é criptografada com bcrypt.
+ * @swagger
+ * /usuarios:
+ *   post:
+ *     summary: Cadastra um novo usuário
+ *     description: Recebe nome, email e senha. A senha é criptografada com bcrypt.
+ *     tags:
+ *       - Usuários
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [nome, email, senha]
+ *             properties:
+ *               nome:
+ *                 type: string
+ *                 example: Carlos Silva
+ *               email:
+ *                 type: string
+ *                 example: carlos@email.com
+ *               senha:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       201:
+ *         description: Usuário criado com sucesso (sem expor a senha).
+ *       400:
+ *         description: Dados obrigatórios faltando ou inválidos.
+ *       409:
+ *         description: E-mail já cadastrado.
  */
-router.post('/', controller.criar);
 
 /**
- * GET /usuarios
- * Lista os usuários cadastrados (exige token). Sem expor a senha.
+ * @swagger
+ * /usuarios:
+ *   get:
+ *     summary: Lista todos os usuários
+ *     description: Retorna os usuários cadastrados sem expor a senha. Exige token Bearer.
+ *     tags:
+ *       - Usuários
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de usuários retornada com sucesso.
+ *       401:
+ *         description: Token ausente ou inválido.
  */
-router.get('/', autenticar, controller.listar);
 
-module.exports = router;
+router.post("/", criar);
+router.get("/", autenticar, listar);
+
+export default router;

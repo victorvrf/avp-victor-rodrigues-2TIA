@@ -1,57 +1,26 @@
-// ============================================================
-// MIDDLEWARE DE AUTENTICAÇÃO (AV2)
-// ============================================================
-// Este arquivo contém a "chave secreta" usada para assinar o
-// token e o middleware que verifica se a requisição possui um
-// token/crachá digital válido.
-// ============================================================
+import jwt from "jsonwebtoken";
 
-const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || "segredo-av2-desenvolvimento-web";
 
-// Chave secreta usada para assinar e validar o token.
-// Ela vem do arquivo .env (veja .env.example). Caso o arquivo .env
-// não exista, é usada a chave de desenvolvimento abaixo, para que o
-// projeto continue funcionando durante a apresentação.
-const JWT_SECRET = process.env.JWT_SECRET || 'segredo-av2-desenvolvimento-web';
-
-if (!process.env.JWT_SECRET) {
-  console.warn(
-    '[aviso] JWT_SECRET não definido no .env — usando a chave de desenvolvimento padrão.'
-  );
-}
-
-/**
- * Middleware: verifica o token enviado no cabeçalho "Authorization".
- *
- * Formato esperado no cabeçalho:
- *   Authorization: Bearer <token>
- *
- * - Sem token        -> 401 Acesso negado.
- * - Token inválido   -> 401 Acesso negado.
- * - Token válido     -> passa para a próxima função da rota.
- */
-function autenticar(req, res, next) {
-  const cabecalho = req.headers['authorization'];
-
-  // O token normalmente chega no formato "Bearer <token>"
-  const token = cabecalho && cabecalho.split(' ')[1];
+export default function autenticar(req, res, next) {
+  const cabecalho = req.headers.authorization;
+  const token = cabecalho && cabecalho.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({
-      erro: 'Acesso negado. Informe um token no cabeçalho Authorization.'
+      erro: "Acesso negado. Informe um token no cabeçalho Authorization.",
     });
   }
 
   try {
-    // Se o token for válido, decodifica-o e guarda os dados do usuário
     const usuario = jwt.verify(token, JWT_SECRET);
     req.usuario = usuario;
     next();
   } catch (err) {
     return res.status(401).json({
-      erro: 'Token inválido ou expirado.'
+      erro: "Token inválido ou expirado.",
     });
   }
 }
 
-module.exports = { autenticar, JWT_SECRET };
+export { JWT_SECRET };

@@ -1,25 +1,23 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const authModel = require('../models/authModel');
-const { JWT_SECRET } = require('../middlewares/autenticar');
-const { respostaPublica } = require('./usuariosController');
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import * as authModel from "../models/authModel.js";
+import { JWT_SECRET } from "../middlewares/autenticar.js";
+import { respostaPublica } from "./usuariosController.js";
 
-async function entrar(req, res) {
+export function entrar(req, res) {
   const { email, senha } = req.body;
-  if (!email || !senha) return res.status(400).json({ erro: 'Informe email e senha.' });
+  if (!email || !senha) return res.status(400).json({ erro: "Informe email e senha." });
 
-  const usuario = await authModel.buscarPorEmailComSenha(email);
-  if (!usuario || !(await bcrypt.compare(senha, usuario.senha))) {
-    return res.status(401).json({ erro: 'E-mail ou senha incorretos.' });
+  const usuario = authModel.buscarPorEmailComSenha(email);
+  if (!usuario || !(bcrypt.compareSync(senha, usuario.senha))) {
+    return res.status(401).json({ erro: "E-mail ou senha incorretos." });
   }
 
   const token = jwt.sign(
     { id: usuario.id, nome: usuario.nome, email: usuario.email },
     JWT_SECRET,
-    { expiresIn: '10h' }
+    { expiresIn: "10h" }
   );
 
-  return res.json({ mensagem: 'Login realizado com sucesso.', token, usuario: respostaPublica(usuario) });
+  return res.json({ mensagem: "Login realizado com sucesso.", token, usuario: respostaPublica(usuario) });
 }
-
-module.exports = { entrar };
