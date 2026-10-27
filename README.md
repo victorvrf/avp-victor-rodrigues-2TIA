@@ -33,7 +33,7 @@ API REST desenvolvida em **Node.js + Express** para cadastrar e gerenciar equipa
 | multer | ^2.2.0 | Upload de arquivos (imagens) |
 | swagger-ui-express | ^5.0.1 | Interface web do Swagger |
 | swagger-jsdoc | ^6.3.0 | Montar a especificação OpenAPI |
-| nodemon | ^3.1.14 | Reinício automático em desenvolvimento |
+| tsx | ^3.x | Executar ES Modules com TypeScript |
 
 ---
 
