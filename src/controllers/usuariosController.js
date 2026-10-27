@@ -13,15 +13,15 @@ function validarCadastro({ nome, email, senha }) {
   return null;
 }
 
-export function criar(req, res) {
+export async function criar(req, res) {
   const erro = validarCadastro(req.body);
   if (erro) return res.status(400).json({ erro });
 
   const { nome, email, senha } = req.body;
-  const existente = usuarioModel.buscarPorEmail(email);
+  const existente = await usuarioModel.buscarPorEmail(email);
   if (existente) return res.status(409).json({ erro: "E-mail já cadastrado." });
 
-  const usuario = usuarioModel.criar({
+  const usuario = await usuarioModel.criar({
     nome: nome.trim(),
     email: email.trim().toLowerCase(),
     senha: bcrypt.hashSync(senha, 10),
@@ -30,7 +30,7 @@ export function criar(req, res) {
   return res.status(201).json(respostaPublica(usuario));
 }
 
-export function listar(req, res) {
+export async function listar(req, res) {
   const usuarios = usuarioModel.listar();
   return res.json(usuarios);
 }

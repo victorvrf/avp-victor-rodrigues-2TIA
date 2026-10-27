@@ -2,8 +2,7 @@ import express from "express";
 import "dotenv/config";
 import prisma from "./src/config/prisma.js";
 import swaggerUi from "swagger-ui-express";
-import swaggerDocs from "./src/config/swagger.js";
-
+import { swaggerDocs } from "./src/config/swagger.js";
 import rotasEquipamentos from "./src/routes/equipamentos.js";
 import rotasUsuarios from "./src/routes/usuarios.js";
 import rotasAuth from "./src/routes/auth.js";
