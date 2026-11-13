@@ -27,11 +27,11 @@ function validarEquipamento(dados, parcial = false) {
   return null;
 }
 
-export function criar(req, res) {
+export async function criar(req, res) {
   const erro = validarEquipamento(req.body);
   if (erro) return res.status(400).json({ erro });
 
-  const equipamento = equipamentoModel.criar({
+  const equipamento = await equipamentoModel.criar({
     nome: req.body.nome,
     categoria: req.body.categoria,
     fabricante: req.body.fabricante,
@@ -42,32 +42,32 @@ export function criar(req, res) {
   return res.status(201).json(equipamento);
 }
 
-export function listar(req, res) {
-  const equipamentos = equipamentoModel.listar();
+export async function listar(req, res) {
+  const equipamentos = await equipamentoModel.listar();
   return res.json(equipamentos);
 }
 
-export function buscarPorId(req, res) {
+export async function buscarPorId(req, res) {
   const id = validarId(req.params.id);
   if (!id) return res.status(400).json({ erro: "ID inválido." });
 
-  const equipamento = equipamentoModel.buscarPorId(id);
+  const equipamento = await equipamentoModel.buscarPorId(id);
   if (!equipamento) return res.status(404).json({ erro: "Equipamento não encontrado." });
 
   return res.json(equipamento);
 }
 
-export function atualizar(req, res) {
+export async function atualizar(req, res) {
   const id = validarId(req.params.id);
   if (!id) return res.status(400).json({ erro: "ID inválido." });
 
   const erro = validarEquipamento(req.body, true);
   if (erro) return res.status(400).json({ erro });
 
-  const existente = equipamentoModel.buscarPorId(id);
+  const existente = await equipamentoModel.buscarPorId(id);
   if (!existente) return res.status(404).json({ erro: "Equipamento não encontrado." });
 
-  const atualizado = equipamentoModel.atualizar(id, {
+  const atualizado = await equipamentoModel.atualizar(id, {
     nome: req.body.nome,
     categoria: req.body.categoria,
     fabricante: req.body.fabricante,
@@ -78,11 +78,11 @@ export function atualizar(req, res) {
   return res.json(atualizado);
 }
 
-export function remover(req, res) {
+export async function remover(req, res) {
   const id = validarId(req.params.id);
   if (!id) return res.status(400).json({ erro: "ID inválido." });
 
-  const removido = equipamentoModel.remover(id);
+  const removido = await equipamentoModel.remover(id);
   if (!removido) return res.status(404).json({ erro: "Equipamento não encontrado." });
 
   return res.json({ mensagem: "Equipamento removido com sucesso.", equipamento: removido });
