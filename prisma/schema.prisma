@@ -19,11 +19,17 @@ model Equipamentos {
   fabricante String @db.VarChar(100)
   quantidade Int
   status     String @default("disponível") @db.VarChar(50)
+
+  @@map("equipamentos")
 }
 
 model Usuarios {
-  id    Int    @id @default(autoincrement())
-  nome  String @db.VarChar(100)
-  email String @unique @db.VarChar(150)
-  senha String @db.VarChar(255)
+  id        String   @id @default(uuid()) @db.VarChar(36)
+  nome      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(191)
+  senhaHash String   @db.VarChar(255)
+  created   DateTime @default(now())
+  updated   DateTime @updatedAt
+
+  @@map("usuarios")
 }

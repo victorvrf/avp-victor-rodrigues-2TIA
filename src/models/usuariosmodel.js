@@ -1,11 +1,17 @@
 import prisma from "../config/prisma.js";
 
-export function criar({ nome, email, senha }) {
+export function criar({ nome, email, senhaHash }) {
   return prisma.usuarios.create({
     data: {
       nome: nome.trim(),
       email: email.trim().toLowerCase(),
-      senha,
+      senhaHash,
+    },
+    select: {
+      id: true,
+      nome: true,
+      email: true,
+      senhaHash: true,
     },
   });
 }

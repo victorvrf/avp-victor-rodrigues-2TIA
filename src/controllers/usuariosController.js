@@ -13,7 +13,7 @@ function validarCadastro({ nome, email, senha }) {
   return null;
 }
 
-export function criar(req, res) {
+export async function criar(req, res) {
   const erro = validarCadastro(req.body);
   if (erro) return res.status(400).json({ erro });
 
@@ -21,10 +21,12 @@ export function criar(req, res) {
   const existente = usuarioModel.buscarPorEmail(email);
   if (existente) return res.status(409).json({ erro: "E-mail já cadastrado." });
 
+  const senhaHash = await bcrypt.hash(senha, 10);
+
   const usuario = usuarioModel.criar({
     nome: nome.trim(),
     email: email.trim().toLowerCase(),
-    senha: bcrypt.hashSync(senha, 10),
+    senhaHash,
   });
 
   return res.status(201).json(respostaPublica(usuario));

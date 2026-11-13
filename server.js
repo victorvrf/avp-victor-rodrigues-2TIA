@@ -1,8 +1,8 @@
 import express from "express";
 import "dotenv/config";
-import prisma from "./src/config/prisma.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocs from "./src/config/swagger.js";
+import prisma from "./src/config/prisma.js";
 
 import rotasEquipamentos from "./src/routes/equipamentos.js";
 import rotasUsuarios from "./src/routes/usuarios.js";
@@ -10,7 +10,9 @@ import rotasAuth from "./src/routes/auth.js";
 import rotasUpload from "./src/routes/upload.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
+
+const link = `http://localhost:${port}`;
 
 app.use(express.json());
 
@@ -44,20 +46,18 @@ app.use((err, req, res, next) => {
   res.status(500).json({ erro: "Erro interno do servidor." });
 });
 
-async function iniciarServidor() {
-  try {
-    await prisma.$connect();
-    console.log("Conexão com o banco de dados estabelecida com sucesso.");
+try {
+  await prisma.$connect();
 
-    app.listen(PORT, () => {
-      console.log(`Servidor rodando em http://localhost:${PORT}`);
-      console.log(`Swagger: http://localhost:${PORT}/api-docs`);
-    });
-  } catch (error) {
-    console.error("Erro ao conectar ao banco de dados:", error.message);
-    await prisma.$disconnect();
-    process.exitCode = -1;
-  }
+  console.log("Banco de dados conectado!");
+  app.listen(port, () => {
+    console.log(`Servidor online em ${link}`);
+    console.log(`Swagger: ${link}/api-docs`);
+  });
+} catch (e) {
+  console.error("[ERRO]: Não foi possível se conectar ao banco: ", e.message);
+
+  await prisma.$disconnect();
+
+  process.exitCode = -1;
 }
-
-iniciarServidor();

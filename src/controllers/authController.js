@@ -4,12 +4,17 @@ import * as authModel from "../models/authModel.js";
 import { JWT_SECRET } from "../middlewares/autenticar.js";
 import { respostaPublica } from "./usuariosController.js";
 
-export function entrar(req, res) {
+export async function entrar(req, res) {
   const { email, senha } = req.body;
   if (!email || !senha) return res.status(400).json({ erro: "Informe email e senha." });
 
-  const usuario = authModel.buscarPorEmailComSenha(email);
-  if (!usuario || !(bcrypt.compareSync(senha, usuario.senha))) {
+  const usuario = authModel.buscarPorEmail(email);
+  if (!usuario) {
+    return res.status(401).json({ erro: "E-mail ou senha incorretos." });
+  }
+
+  const senhaCorreta = await bcrypt.compare(senha, usuario.senhaHash);
+  if (!senhaCorreta) {
     return res.status(401).json({ erro: "E-mail ou senha incorretos." });
   }
 

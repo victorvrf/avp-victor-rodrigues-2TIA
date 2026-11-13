@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE `Equipamentos` (
+CREATE TABLE `equipamentos` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(100) NOT NULL,
     `categoria` VARCHAR(100) NOT NULL,
@@ -11,12 +11,14 @@ CREATE TABLE `Equipamentos` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Usuarios` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+CREATE TABLE `usuarios` (
+    `id` VARCHAR(36) NOT NULL,
     `nome` VARCHAR(100) NOT NULL,
-    `email` VARCHAR(150) NOT NULL,
-    `senha` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `senhaHash` VARCHAR(255) NOT NULL,
+    `created` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Usuarios_email_key`(`email`),
+    UNIQUE INDEX `usuarios_email_key`(`email`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
